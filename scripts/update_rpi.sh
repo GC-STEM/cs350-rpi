@@ -45,6 +45,9 @@ echo "  4. Upgrade installed system packages"
 echo "  5. Remove packages and files that are no longer needed"
 echo "  6. Reboot, shut down, or return to the command prompt"
 echo
+echo "Do you wish to continue with the update? (y/N): "
+read -r continue_update
+echo
 
 # Ask for the sudo password near the beginning.
 echo "Checking administrator access..."

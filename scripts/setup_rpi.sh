@@ -32,6 +32,9 @@ echo "  6. Create a Python virtual environment"
 echo "  7. Remove packages files that are no longer needed"
 echo "  8. Reboot, shut down, or return to the command prompt"
 echo
+echo "Do you wish to continue with the setup? (y/N): "
+read -r continue_setup
+echo
 
 # Ask for the sudo password near the beginning.
 echo "Checking administrator access..."
