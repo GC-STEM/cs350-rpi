@@ -6,8 +6,8 @@
 # update their Raspberry Pi.
 #
 # Usage:
-#   chmod +x update_rpi.sh
-#   ./update_rpi.sh
+#   chmod +x scripts/update_rpi.sh
+#   ./scripts/update_rpi.sh
 #
 # Source:
 #   https://www.raspberrypi.com/documentation/computers/os.html#update-software
@@ -167,7 +167,7 @@ case "$choice" in
         echo "If you are connected by SSH, this connection will close."
         echo "Wait until the Raspberry Pi has fully restarted, then reconnect with:"
         echo
-        printf "  ssh %s@%s\n\n" "$RPI_USER" "$RPI_HOSTNAME"
+        printf "  ssh %s@%s.local\n\n" "$RPI_USER" "$RPI_HOSTNAME"
         sudo reboot
         ;;
     2)
