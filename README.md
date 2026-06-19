@@ -8,51 +8,78 @@ This repository is incomplete and under active development. Code, documentation,
 
 ## Prerequisites
 
-Before you can use the repository, you need to have completed the following tasks:
+Before you use this repository, complete these tasks:
 
-1. Assembled your Raspberry Pi
-2. Created the bootable microSD card
-3. Powered on your Raspberry Pi
-4. Connected your Raspberry Pi to the same network as your computer
+1. Assemble your Raspberry Pi.
+2. Create the bootable microSD card.
+3. Power on your Raspberry Pi.
+4. Connect your Raspberry Pi to the same network as your main computer.
 
 ## Getting Started
 
-On your main computer, follow the steps below. You will perform all these steps in a terminal window on your main computer that is connected to the same network as your Raspberry Pi. After you complete these steps, your Raspberry Pi will be ready to help you complete all course activities.
+Follow these steps from a terminal window on your main computer. First, you will connect to your Raspberry Pi using Secure Shell (SSH). SSH lets you use your Raspberry Pi command line from another computer on the same network. After you connect, the remaining commands will run on the Raspberry Pi.
 
-1. **Connect to your Raspberry Pi**. Open a terminal on your computer and run the following command to connect to your Raspberry Pi via Secure Shell (SSH). Replace `username` with your actual username on the Raspberry Pi, and `hostname` with the hostname of your Raspberry Pi. If this is your first time connecting, you may be prompted to accept the Raspberry Pi's SSH key.
+**1. Connect to your Raspberry Pi.** Open a terminal on your main computer and run the command below. Replace `username` with your Raspberry Pi username and `hostname` with your Raspberry Pi hostname.
 
 ```bash
 ssh username@hostname
 ```
 
-*Note*. Use set username and hostname values when you ran the **Raspberry Pi Imager** to create the bootable microSD card. If you are unsure of your Raspberry Pi's hostname, you can use the `hostname` command on the Raspberry Pi terminal to find it.
+![TODO: Add gif screenshot of SSH connection](./assets/images/TODO_add_filename.gif)
 
-2. **Download the repository**. Copy the following commands and paste them into your terminal window to copy this repository directly into your home directory (`~/`) on your Raspberry Pi. Make sure you copy and paste the commands exactly as shown. :
+If this is your first time connecting to the Raspberry Pi, you may be asked to accept the Raspberry Pi SSH host key. Type `yes` to accept and continue. The host key helps your computer recognize that it is connecting to the same Raspberry Pi in the future.
+
+You will then be prompted to enter the password for your Raspberry Pi user account. The cursor will not move as you type the password. After you enter the password, press `Enter` to continue. If the username, hostname, or password are incorrect, you will see an error message and will need to try again.
+
+*Note.* Use the hostname, username, and password values you set in **Raspberry Pi Imager** when you created the bootable microSD card. If you do not have this information, open the **Raspberry Pi Imager** and follow the instructions to get to the Customization section. It should have saved your settings. If not, you will need to run the imager again to on your microSD card. Be sure to note the hostname, username, and password for future use.
+
+**2. Download the repository files.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard. Then, paste the following commands into the Raspberry Pi terminal prompt. These commands perform the following actions on your Raspberry Pi:
+
+1. Update the package list and install Git, a version control tool used to download files from GitHub.
+2. Download the repository into a temporary directory named `/tmp/cs350-rpi`.
+3. Copy the course files into your home directory (`~/`).
+4. Remove the temporary repository copy.
+5. Display the contents of your home directory.
 
 ```bash
 sudo apt update && sudo apt install -y git
-git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi && cp -a /tmp/cs350-rpi/. ~/
+git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
+cp -a /tmp/cs350-rpi/cs350 ~/
+cp -a /tmp/cs350-rpi/rpilib ~/
+cp -a /tmp/cs350-rpi/scripts ~/
+cp -a /tmp/cs350-rpi/requirements.txt ~/
+rm -rf /tmp/cs350-rpi
 ls ~/
+
 ```
 
-These commands will will perform the following actions on your Raspberry Pi:
-    1. Update the package list and install Git version control;
-    2. Create a temporary directory (`/tmp/cs350-rpi`) to hold the repository;
-    3. Copy all the files from that temporary directory to your home directory;
-    4. Display the contents of your home directory. You should see the `cs350`, `rpilib`, and `scripts` directories.
+After the commands finish, you should see these directories in your home directory of your Raspberry Pi:
 
-3. **Run the setup script**. After downloading the repository, run the following command to execute the setup script. This script will install necessary dependencies and perform any required configuration for the course activities.
+```text
+cs350
+rpilib
+scripts
+requirements.txt
+```
+
+![TODO: Add gif screenshot of repository contents](./assets/images/TODO_add_filename.gif)
+
+**3. Run the setup script.** After downloading the repository files, run the following commands to start the Raspberry Pi setup script.
 
 ```bash
-chmod +x setup_rpi.sh
-./setup_rpi.sh
+chmod +x ~/scripts/setup_rpi.sh
+~/scripts/setup_rpi.sh
 ```
+
+The setup script installs required software packages and configures the Raspberry Pi environment for the course activities.
+
+![TODO: Add gif screenshot of setup script](./assets/images/TODO_add_filename.gif)
 
 ## Repository Overview
 
 ### Repository Structure
 
-The course repository is organized so the main directories are placed directly in your Raspberry Pi home folder (`~/`). After you download the repository files, you should see the directories shown below in your home directory. The `cs350` folder contains the course activity files, `rpilib` contains reusable Raspberry Pi Python code, and `scripts` contains helper scripts used to set up, test, or update your Raspberry Pi environment.
+The course repository is organized so the main directories are placed directly in your Raspberry Pi home folder (`~/`). The `cs350` directory contains the course activity files, `rpilib` contains reusable Raspberry Pi Python code, and `scripts` contains helper scripts used to set up, test, or update your Raspberry Pi environment.
 
 ```text
 ~/
@@ -77,11 +104,12 @@ The course repository is organized so the main directories are placed directly i
 │   ├── smoke_rpi.sh     # Run smoke tests on Raspberry Pi
 │   └── update_rpi.sh    # Update Raspberry Pi environment
 │
-├── README.md            # Repository overview
 └── requirements.txt     # Course Python dependencies
 ```
 
-*Note.* This repository may include additional files and directories not listed in the main repository structure. These files support repository maintenance, documentation, testing, or version control. Unless your instructor tells you otherwise, do not modify those files. Focus on the course directories and files listed above.
+In Python, a **module** is a single `.py` file that contains reusable code. A **package** is a directory that groups related Python modules together. A **library** is a broader collection of reusable code. In this repository, `rpilib` is the reusable Raspberry Pi library. It may contain packages and modules that support GPIO, sensors, displays, serial communication, or other Raspberry Pi features used in the course.
+
+*Note.* This repository may include additional files and directories not listed in the main Raspberry Pi directory structure. These files support repository maintenance, documentation, testing, or version control. Unless your instructor tells you otherwise, do not modify those files. Focus on the course directories and files listed above.
 
 ## Troubleshooting
 
