@@ -29,10 +29,11 @@ echo "  3. Check available disk space"
 echo "  4. Install command-line tools"
 echo "  5. Install Python packages"
 echo "  6. Create a Python virtual environment"
-echo "  7. Remove files that are no longer needed"
+echo "  7. Remove package files that are no longer needed"
 echo "  8. Reboot, shut down, or return to the command prompt"
 echo
-echo "Do you wish to continue with the setup? (y/N): "
+
+printf "Do you wish to continue with the setup? (y/N): "
 read -r continue_setup
 echo
 
@@ -52,6 +53,8 @@ echo "Step 1 of 8: Removing unnecessary files..."
 available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
 available_mb=$((available_kb / 1024))
 echo "Available space before cleaning: ${available_mb} MB"
+echo
+
 rm -rf /tmp/cs350-rpi
 rm -rf ~/assets
 rm -f ~/README.md
@@ -185,12 +188,7 @@ case "$choice" in
         echo
         sudo shutdown -h now
         ;;
-    3)
-        echo "Returning to the command prompt."
-        echo "No reboot or shutdown was started."
-        ;;
-    *)
-        echo "Invalid choice."
+    3|*)
         echo "Returning to the command prompt."
         echo "No reboot or shutdown was started."
         ;;
