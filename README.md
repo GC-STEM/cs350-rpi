@@ -33,19 +33,13 @@ You will then be prompted to enter the password for your Raspberry Pi user accou
 
 1. Update the package list and install Git, a version control tool used to download files from GitHub.
 2. Download the repository into a temporary directory named `/tmp/cs350-rpi`.
-3. Copy the course files into your home directory (`~/`).
-4. Remove the temporary repository copy.
-5. Display the contents of your home directory.
+3. Run the setup script to configure your Raspberry Pi environment.
 
 ```bash
-sudo apt update && sudo apt install -y git tree
+sudo apt update && sudo apt install -y git
 git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
-cp -a /tmp/cs350-rpi/cs350 ~/
-cp -a /tmp/cs350-rpi/rpilib ~/
-cp -a /tmp/cs350-rpi/scripts ~/
-rm -rf /tmp/cs350-rpi
-tree -L 2 ~/
-
+chmod +x /tmp/cs350-rpi/scripts/setup_rpi.sh
+/tmp/cs350-rpi/scripts/setup_rpi.sh
 ```
 
 After the commands finish, you should see these sub-directories and files in your home directory of your Raspberry Pi:

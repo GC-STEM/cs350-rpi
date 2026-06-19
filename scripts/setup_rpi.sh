@@ -71,9 +71,11 @@ fi
 echo "Fetching the latest course files from GitHub..."
 git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
 
-# Safely copy directories to the home folder
+# Safely wipe any existing/broken student directories to ensure a completely clean slate
 echo "Setting up course folders (~/cs350, ~/rpilib, ~/scripts)..."
-mkdir -p ~/cs350 ~/rpilib ~/scripts
+rm -rf ~/cs350 ~/rpilib ~/scripts
+
+# Copy directories cleanly from the temporary repository clone
 cp -a /tmp/cs350-rpi/cs350 ~/
 cp -a /tmp/cs350-rpi/rpilib ~/
 cp -a /tmp/cs350-rpi/scripts ~/
