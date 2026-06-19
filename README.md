@@ -23,14 +23,14 @@ Follow these steps from a terminal window on your main computer. First, you will
 ssh stu@rpi.local
 
 ```
-`
+
 If this is your first time connecting to the Raspberry Pi, you may be asked to accept the Raspberry Pi SSH host key. Type `yes` to accept and continue. The host key helps your computer recognize that it is connecting to the same Raspberry Pi in the future.
 
 You will then be prompted to enter the password for your Raspberry Pi user account. The cursor will not move as you type the password. After you enter the password, press `Enter` to continue. If the username, hostname, or password are incorrect, you will see an error message and will need to try again.
 
 > *Note.* Use the hostname, username, and password values you set in **Raspberry Pi Imager** when you created the bootable microSD card. If you do not have this information, open the **Raspberry Pi Imager** and follow the instructions to get to the Customization section. It should have saved your settings. If not, you will need to run the imager again on your microSD card. Be sure to note the hostname, username, and password for future use.
 
-**2. Download the repository files and run setup.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard. Then, paste the following commands into the Raspberry Pi terminal prompt.
+**2. Download the repository files and run setup.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard--just click the **Copy** button on the right for the code block below. Then, paste the following commands into the Raspberry Pi terminal prompt.
 
 These commands will install Git, temporarily download the latest project dependencies, and execute the automated setup environment configuration utility.
 
@@ -42,11 +42,10 @@ chmod +x /tmp/cs350-rpi/scripts/setup_rpi.sh
 
 ```
 
-After the interactive script finishes executing, it will copy the files into place. You should see these sub-directories and files in your home directory (`~/`) of your Raspberry Pi:
+After the interactive script finishes executing, it will copy the files into place. If you run `tree -L 2` on your Raspberry Pi home directory (`~/`), you should see these sub-directories and files, albeit without the comments shown below:
 
 ```text
 ~/
-│
 ├── cs350/                # Course materials for CS 350
 │   ├── m1/               # Module 1 | Assignment: Prepare Your Raspberry Pi
 │   ├── m2/               # Module 2 | Milestone 1: PWM Lab
@@ -66,9 +65,11 @@ After the interactive script finishes executing, it will copy the files into pla
     └── update_rpi.sh     # Update Raspberry Pi environment
 ```
 
-> *Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure (such as `.envrc` and `.venv`). These files support maintenance, documentation, testing, or automatic virtual environment activation. Do not modify those hidden assets. Focus your coding tasks inside the standard course directories listed above.
+> *Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure. These files support maintenance, documentation, testing, or automatic virtual environment activation. Do not modify those hidden assets. Focus your coding tasks inside the standard course directories listed above.
 
 ## Troubleshooting
+
+{{TODO: Add more troubleshooting items as they arise during testing.}}
 
 | Issue | Potential Cause | Resolution |
 | --- | --- | --- |
