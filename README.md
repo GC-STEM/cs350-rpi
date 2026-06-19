@@ -43,7 +43,6 @@ git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
 cp -a /tmp/cs350-rpi/cs350 ~/
 cp -a /tmp/cs350-rpi/rpilib ~/
 cp -a /tmp/cs350-rpi/scripts ~/
-cp -a /tmp/cs350-rpi/requirements.txt ~/
 rm -rf /tmp/cs350-rpi
 ls ~/
 
@@ -51,12 +50,7 @@ ls ~/
 
 After the commands finish, you should see these directories in your home directory of your Raspberry Pi:
 
-```text
-cs350
-rpilib
-scripts
-requirements.txt
-```
+`cs350  requirements.txt  rpilib  scripts`
 
 ![TODO: Add gif screenshot of repository contents](./assets/images/TODO_add_filename.gif)
 

@@ -123,17 +123,41 @@ echo
 
 # Step 4: Install command-line tools
 echo "Step 4 of 8: Installing command-line tools..."
-sudo apt-get install -y git gh shellcheck
+sudo apt-get install -y direnv gh git shellcheck tree
+echo "Done installing command-line tools."
 
 # Step 5: Install Python packages
 echo "Step 5 of 8: Installing Python packages..."
 sudo apt-get install -y python3-full python3-venv python3-pip
 sudo apt-get install -y python3-rpi.gpio python3-serial python3-smbus
+echo "Done installing Python packages."
 
 # Step 6: Create a Python virtual environment in ~/cs350/.
 echo "Step 6 of 8: Creating Python virtual environment..."
+
 mkdir -p ~/cs350
-python3 -m venv ~/cs350/venv
+python3 -m venv ~/cs350/.venv
+~/cs350/.venv/bin/python -m pip install --upgrade pip
+~/cs350/.venv/bin/python -m pip install -r ~/cs350/requirements.txt
+
+echo "Configuring automatic virtual environment activation..."
+
+# Add the direnv hook to ~/.bashrc if it is not already present.
+if ! grep -q 'direnv hook bash' ~/.bashrc; then
+    echo '' >> ~/.bashrc
+    echo '# Enable direnv for project-specific environment settings.' >> ~/.bashrc
+    echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+fi
+
+# Create the direnv configuration file for the CS 350 directory.
+cat > ~/cs350/.envrc <<'EOF'
+source .venv/bin/activate
+EOF
+
+# Approve the .envrc file so direnv can use it.
+cd ~/cs350 || exit 1
+direnv allow
+
 echo "Done creating Python virtual environment."
 echo
 
