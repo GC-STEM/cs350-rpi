@@ -29,12 +29,17 @@ echo "  3. Check available disk space"
 echo "  4. Install command-line tools"
 echo "  5. Install Python packages"
 echo "  6. Create a Python virtual environment"
-echo "  7. Remove packages files that are no longer needed"
+echo "  7. Remove files that are no longer needed"
 echo "  8. Reboot, shut down, or return to the command prompt"
 echo
 echo "Do you wish to continue with the setup? (y/N): "
 read -r continue_setup
 echo
+
+if [[ "${continue_setup,,}" != "y" ]]; then
+    echo "Setup cancelled by user."
+    exit 0
+fi
 
 # Ask for the sudo password near the beginning.
 echo "Checking administrator access..."
@@ -44,11 +49,21 @@ echo
 
 # Step 1: Remove unnecessary files.
 echo "Step 1 of 8: Removing unnecessary files..."
+available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
+available_mb=$((available_kb / 1024))
+echo "Available space before cleaning: ${available_mb} MB"
 rm -rf /tmp/cs350-rpi
 rm -rf ~/assets
 rm -f ~/README.md
+rm -f ~/.gitignore
 
 sudo apt-get clean
+
+available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
+available_mb=$((available_kb / 1024))
+echo "Available space after cleaning:  ${available_mb} MB"
+echo "Done removing unnecessary files."
+echo
 
 # Step 2: Update the package list.
 echo "Step 2 of 8: Updating package list..."
@@ -105,12 +120,12 @@ echo
 
 # Step 4: Install command-line tools
 echo "Step 4 of 8: Installing command-line tools..."
-sudo apt install -y git gh shellcheck
+sudo apt-get install -y git gh shellcheck
 
 # Step 5: Install Python packages
 echo "Step 5 of 8: Installing Python packages..."
-sudo apt install -y python3-full python3-venv python3-pip
-sudo apt install -y python3-rpi.gpio python3-serial python3-smbus
+sudo apt-get install -y python3-full python3-venv python3-pip
+sudo apt-get install -y python3-rpi.gpio python3-serial python3-smbus
 
 # Step 6: Create a Python virtual environment in ~/cs350/.
 echo "Step 6 of 8: Creating Python virtual environment..."
