@@ -17,11 +17,12 @@ Before you use this repository, complete these tasks:
 
 Follow these steps from a terminal window on your main computer. First, you will connect to your Raspberry Pi using Secure Shell (SSH). SSH lets you use your Raspberry Pi command line from another computer on the same network. After you connect, the setup commands will run directly on the Raspberry Pi.
 
-**1. Connect to your Raspberry Pi.** Open a terminal on your main computer and run the command below. If you have not changed the default settings, copy the following command and paste it into your terminal. If you changed the example username or hostname, replace `stu` and `rpi` with your values and type the command accordingly:
+**1. Connect to your Raspberry Pi.** Open a terminal on your main computer and run the command below. If you have not changed the default settings, copy the following command and paste it into your terminal. If you changed the example username or hostname, replace `stu` with your username and `rpi` with your hostname, and type the command accordingly:
 
 ```bash
+ssh-keygen -R rpi
+ssh-keygen -R rpi.local
 ssh stu@rpi.local
-
 ```
 
 If this is your first time connecting to the Raspberry Pi, you may be asked to accept the Raspberry Pi SSH host key. Type `yes` to accept and continue. The host key helps your computer recognize that it is connecting to the same Raspberry Pi in the future.
