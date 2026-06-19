@@ -1,6 +1,8 @@
 # CS 350 – Raspberry Pi Repository
 
-<!-- To see this file in a clean, formatted view, right-click on the filename and choose “Open Preview.” -->
+## ⚠️ Under Construction
+
+This repository is incomplete and under active development. Code, documentation, structure, and features may change frequently. Use with caution, and check back for updates.
 
 ## Prerequisites
 
@@ -13,36 +15,34 @@ Before you use this repository, complete these tasks:
 
 ## Getting Started
 
-Follow these steps from a terminal window on your main computer. First, you will connect to your Raspberry Pi using Secure Shell (SSH). SSH lets you use your Raspberry Pi command line from another computer on the same network. After you connect, the remaining commands will run on the Raspberry Pi.
+Follow these steps from a terminal window on your main computer. First, you will connect to your Raspberry Pi using Secure Shell (SSH). SSH lets you use your Raspberry Pi command line from another computer on the same network. After you connect, the setup commands will run directly on the Raspberry Pi.
 
-**1. Connect to your Raspberry Pi.** Open a terminal on your main computer and run the command below. If you have not changed the default settings, copy the following command and paste it into your terminal. If you changed the recommended username or hostname, replace `stu` and `rpi` with your values and type the command accordingly:
+**1. Connect to your Raspberry Pi.** Open a terminal on your main computer and run the command below. If you have not changed the default settings, copy the following command and paste it into your terminal. If you changed the example username or hostname, replace `stu` and `rpi` with your values and type the command accordingly:
 
 ```bash
 ssh stu@rpi.local
+
 ```
-
-![TODO: Add gif screenshot of SSH connection](./assets/images/TODO_add_filename.gif)
-
+`
 If this is your first time connecting to the Raspberry Pi, you may be asked to accept the Raspberry Pi SSH host key. Type `yes` to accept and continue. The host key helps your computer recognize that it is connecting to the same Raspberry Pi in the future.
 
 You will then be prompted to enter the password for your Raspberry Pi user account. The cursor will not move as you type the password. After you enter the password, press `Enter` to continue. If the username, hostname, or password are incorrect, you will see an error message and will need to try again.
 
-*Note.* Use the hostname, username, and password values you set in **Raspberry Pi Imager** when you created the bootable microSD card. If you do not have this information, open the **Raspberry Pi Imager** and follow the instructions to get to the Customization section. It should have saved your settings. If not, you will need to run the imager again to on your microSD card. Be sure to note the hostname, username, and password for future use.
+> *Note.* Use the hostname, username, and password values you set in **Raspberry Pi Imager** when you created the bootable microSD card. If you do not have this information, open the **Raspberry Pi Imager** and follow the instructions to get to the Customization section. It should have saved your settings. If not, you will need to run the imager again on your microSD card. Be sure to note the hostname, username, and password for future use.
 
-**2. Download the repository files.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard. Then, paste the following commands into the Raspberry Pi terminal prompt. These commands perform the following actions on your Raspberry Pi:
+**2. Download the repository files and run setup.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard. Then, paste the following commands into the Raspberry Pi terminal prompt.
 
-1. Update the package list and install Git, a version control tool used to download files from GitHub.
-2. Download the repository into a temporary directory named `/tmp/cs350-rpi`.
-3. Run the setup script to configure your Raspberry Pi environment.
+These commands will install Git, temporarily download the latest project dependencies, and execute the automated setup environment configuration utility.
 
 ```bash
 sudo apt update && sudo apt install -y git
 git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
 chmod +x /tmp/cs350-rpi/scripts/setup_rpi.sh
 /tmp/cs350-rpi/scripts/setup_rpi.sh
+
 ```
 
-After the commands finish, you should see these sub-directories and files in your home directory of your Raspberry Pi:
+After the interactive script finishes executing, it will copy the files into place. You should see these sub-directories and files in your home directory (`~/`) of your Raspberry Pi:
 
 ```text
 ~/
@@ -57,8 +57,8 @@ After the commands finish, you should see these sub-directories and files in you
 │   ├── m7/               # Module 7 | Final Project: Thermostat Lab
 │   └── requirements.txt  # Course Python dependencies
 │
-├── rpilib/               # Reusable Python library for Raspberry Pi
-│   └── __init__.py       # Initialize the library
+├── rpilib/               # Future Python library for Raspberry Pi
+│   └── __init__.py       # Initialize the library (under active development)
 │
 └── scripts/              # Reusable Raspberry Pi shell scripts
     ├── setup_rpi.sh      # Set up Raspberry Pi environment
@@ -66,23 +66,16 @@ After the commands finish, you should see these sub-directories and files in you
     └── update_rpi.sh     # Update Raspberry Pi environment
 ```
 
-*Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure. These files support maintenance, documentation, testing, or version control. Do not modify those files or directories. Focus on the course directories and files listed above.
-
-**3. Run the setup script.** After downloading the repository files, run the following commands to start the Raspberry Pi setup script.
-
-```bash
-chmod +x ~/scripts/setup_rpi.sh
-~/scripts/setup_rpi.sh
-```
-
-The setup script installs required software packages and configures the Raspberry Pi environment for the course activities.
-
-![TODO: Add gif screenshot of setup script](./assets/images/TODO_add_filename.gif)
+> *Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure (such as `.envrc` and `.venv`). These files support maintenance, documentation, testing, or automatic virtual environment activation. Do not modify those hidden assets. Focus your coding tasks inside the standard course directories listed above.
 
 ## Troubleshooting
 
-{{TODO: Add troubleshooting tips for common issues.}}
+| Issue | Potential Cause | Resolution |
+| --- | --- | --- |
+| `ssh: Could not resolve hostname rpi.local` | Network mismatch or Pi is booting. | Ensure your main computer and Raspberry Pi are on the exact same Wi-Fi/local network. Wait 60 seconds and try again. |
+| Warning: `Existing course folders were found` | Re-running the script mid-semester. | **Choose Option 2** if you want to fix your tools or virtual environment without overwriting your programming assignments. |
+| `requirements.txt not found locally` | Broken file transfer state. | The script will automatically pull a secure fallback file straight from GitHub. Let the script continue running. |
 
 ## AI Acknowledgment
 
-{{TODO: Add SNHU standard AI acknowledgment statement.}}
+This repository structure, including its automated environment deployment scripts, was developed and tested using a combination of foundational course architectures and generative AI assistance to maximize system reliability, provide defensive file-backup checkpoints, and establish strict classroom reproducibility standards.

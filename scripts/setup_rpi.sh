@@ -205,14 +205,22 @@ echo
 
 # Step 4: Install command-line tools
 echo "Step 4 of 8: Installing command-line tools..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y direnv gh git shellcheck tree
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y direnv
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gh
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y shellcheck
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tree
 echo "✔ Done installing command-line tools."
 echo
 
 # Step 5: Install Python packages
 echo "Step 5 of 8: Installing Python packages..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-full python3-venv python3-pip
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-rpi.gpio python3-serial python3-smbus
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-full
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-rpi.gpio
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-serial
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-smbus
 echo "✔ Done installing Python packages."
 echo
 
@@ -248,8 +256,15 @@ source .venv/bin/activate
 EOF
 
 # Approve the .envrc file so direnv can use it.
-cd ~/cs350 || { echo "❌ ERROR: Could not navigate to ~/cs350"; exit 1; }
-direnv allow
+if cd ~/cs350 2>/dev/null; then
+    direnv allow
+    cd - >/dev/null || true  # Return cleanly to the previous working directory
+else
+    echo "⚠️  WARNING: Could not navigate to ~/cs350. Automatic virtual"
+    echo "   environment activation (direnv) could not be pre-approved."
+    echo "   You may need to run 'cd ~/cs350 && direnv allow' manually later."
+    echo
+fi
 
 echo "✔ Done creating Python virtual environment."
 echo
