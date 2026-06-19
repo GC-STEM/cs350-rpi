@@ -269,6 +269,14 @@ fi
 echo "✔ Done creating Python virtual environment."
 echo
 
+# Make the scripts in ~/scripts/ executable.
+echo "Making setup and update scripts executable..."
+chmod +x ~/scripts/setup_rpi.sh
+chmod +x ~/scripts/update_rpi.sh
+chmod +x ~/scripts/smoke_rpi.sh
+echo "✔ Done setting script permissions."
+echo
+
 # Step 7: Remove packages and downloaded package files that are no longer needed.
 echo "Step 7 of 8: Cleaning up system packages and temporary files..."
 echo "➜ Removing unnecessary software dependencies..."
