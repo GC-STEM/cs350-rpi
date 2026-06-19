@@ -38,38 +38,17 @@ You will then be prompted to enter the password for your Raspberry Pi user accou
 5. Display the contents of your home directory.
 
 ```bash
-sudo apt update && sudo apt install -y git
+sudo apt update && sudo apt install -y git tree
 git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
 cp -a /tmp/cs350-rpi/cs350 ~/
 cp -a /tmp/cs350-rpi/rpilib ~/
 cp -a /tmp/cs350-rpi/scripts ~/
 rm -rf /tmp/cs350-rpi
-ls ~/
+tree -L 2 ~/
 
 ```
 
-After the commands finish, you should see these directories in your home directory of your Raspberry Pi:
-
-`cs350  requirements.txt  rpilib  scripts`
-
-![TODO: Add gif screenshot of repository contents](./assets/images/TODO_add_filename.gif)
-
-**3. Run the setup script.** After downloading the repository files, run the following commands to start the Raspberry Pi setup script.
-
-```bash
-chmod +x ~/scripts/setup_rpi.sh
-~/scripts/setup_rpi.sh
-```
-
-The setup script installs required software packages and configures the Raspberry Pi environment for the course activities.
-
-![TODO: Add gif screenshot of setup script](./assets/images/TODO_add_filename.gif)
-
-## Repository Overview
-
-### Repository Structure
-
-The course repository is organized so the main directories are placed directly in your Raspberry Pi home folder (`~/`). The `cs350` directory contains the course activity files, `rpilib` contains reusable Raspberry Pi Python code, and `scripts` contains helper scripts used to set up, test, or update your Raspberry Pi environment.
+After the commands finish, you should see these sub-directories and files in your home directory of your Raspberry Pi:
 
 ```text
 ~/
@@ -84,9 +63,6 @@ The course repository is organized so the main directories are placed directly i
 │   └── m7/              # Module 7 | Final Project: Thermostat Lab
 │
 ├── rpilib/              # Reusable Python library for Raspberry Pi
-│   ├── <package>/       # Package(s) for related Raspberry Pi helper modules
-│   │   ├── __init__.py  # Initialize the package
-│   │   └── <module>.py  # Module(s) for specific functionality
 │   └── __init__.py      # Initialize the library
 │
 ├── scripts/             # Reusable Raspberry Pi shell scripts
@@ -96,10 +72,18 @@ The course repository is organized so the main directories are placed directly i
 │
 └── requirements.txt     # Course Python dependencies
 ```
+*Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure. These files support maintenance, documentation, testing, or version control. Do not modify those files or directories. Focus on the course directories and files listed above.
 
-In Python, a **module** is a single `.py` file that contains reusable code. A **package** is a directory that groups related Python modules together. A **library** is a broader collection of reusable code. In this repository, `rpilib` is the reusable Raspberry Pi library. It may contain packages and modules that support GPIO, sensors, displays, serial communication, or other Raspberry Pi features used in the course.
+**3. Run the setup script.** After downloading the repository files, run the following commands to start the Raspberry Pi setup script.
 
-*Note.* This repository may include additional files and directories not listed in the main Raspberry Pi directory structure. These files support repository maintenance, documentation, testing, or version control. Unless your instructor tells you otherwise, do not modify those files. Focus on the course directories and files listed above.
+```bash
+chmod +x ~/scripts/setup_rpi.sh
+~/scripts/setup_rpi.sh
+```
+
+The setup script installs required software packages and configures the Raspberry Pi environment for the course activities.
+
+![TODO: Add gif screenshot of setup script](./assets/images/TODO_add_filename.gif)
 
 ## Troubleshooting
 

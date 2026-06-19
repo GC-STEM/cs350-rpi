@@ -48,24 +48,46 @@ sudo -v
 echo "Administrator access confirmed."
 echo
 
-# Step 1: Remove unnecessary files.
-echo "Step 1 of 8: Removing unnecessary files..."
+# Step 1: Remove old files and stage fresh course directories.
+echo "Step 1 of 8: Staging fresh course files and cleaning up..."
 available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
 available_mb=$((available_kb / 1024))
 echo "Available space before cleaning: ${available_mb} MB"
 echo
 
+# Clean up any leftover temporary files from previous runs
 rm -rf /tmp/cs350-rpi
 rm -rf ~/assets
 rm -f ~/README.md
 rm -f ~/.gitignore
 
-sudo apt-get clean
+# Ensure git is installed so we can fetch the repository
+if ! command -v git &> /dev/null; then
+    echo "Installing git to fetch course repository..."
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
+fi
+
+echo "Fetching the latest course files from GitHub..."
+git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
+
+# Safely copy directories to the home folder
+echo "Setting up course folders (~/cs350, ~/rpilib, ~/scripts)..."
+mkdir -p ~/cs350 ~/rpilib ~/scripts
+cp -a /tmp/cs350-rpi/cs350 ~/
+cp -a /tmp/cs350-rpi/rpilib ~/
+cp -a /tmp/cs350-rpi/scripts ~/
+
+# Clean up the temporary clone repository
+rm -rf /tmp/cs350-rpi
+
+# Clear apt cache to save space
+sudo DEBIAN_FRONTEND=noninteractive apt-get clean
 
 available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
 available_mb=$((available_kb / 1024))
 echo "Available space after cleaning:  ${available_mb} MB"
-echo "Done removing unnecessary files."
+echo "Done staging course files and cleaning up."
 echo
 
 # Step 2: Update the package list.
@@ -123,13 +145,13 @@ echo
 
 # Step 4: Install command-line tools
 echo "Step 4 of 8: Installing command-line tools..."
-sudo apt-get install -y direnv gh git shellcheck tree
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y direnv gh git shellcheck tree
 echo "Done installing command-line tools."
 
 # Step 5: Install Python packages
 echo "Step 5 of 8: Installing Python packages..."
-sudo apt-get install -y python3-full python3-venv python3-pip
-sudo apt-get install -y python3-rpi.gpio python3-serial python3-smbus
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-full python3-venv python3-pip
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-rpi.gpio python3-serial python3-smbus
 echo "Done installing Python packages."
 
 # Step 6: Create a Python virtual environment in ~/cs350/.
@@ -138,6 +160,14 @@ echo "Step 6 of 8: Creating Python virtual environment..."
 mkdir -p ~/cs350
 python3 -m venv ~/cs350/.venv
 ~/cs350/.venv/bin/python -m pip install --upgrade pip
+
+# Double check that requirements.txt exists; use raw fallback if missing
+if [ ! -f ~/cs350/requirements.txt ]; then
+    echo "requirements.txt not found locally. Fetching backup from GitHub..."
+    curl -sSLo ~/cs350/requirements.txt "https://raw.githubusercontent.com/GC-STEM/cs350-rpi/5c2a6695dcc843d0f43220b1a12d09b5d9942868/cs350/requirements.txt"
+fi
+
+echo "Installing pip dependencies (this may take a few minutes)..."
 ~/cs350/.venv/bin/python -m pip install -r ~/cs350/requirements.txt
 
 echo "Configuring automatic virtual environment activation..."
@@ -155,7 +185,7 @@ source .venv/bin/activate
 EOF
 
 # Approve the .envrc file so direnv can use it.
-cd ~/cs350 || exit 1
+cd ~/cs350 || { echo "ERROR: Could not navigate to ~/cs350"; exit 1; }
 direnv allow
 
 echo "Done creating Python virtual environment."
@@ -163,12 +193,12 @@ echo
 
 # Step 7: Remove packages and downloaded package files that are no longer needed.
 echo "Step 7 of 8: Removing packages that are no longer needed..."
-sudo apt-get autoremove -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 echo "Done removing unnecessary packages."
 echo
 
 echo "Cleaning up downloaded package files..."
-sudo apt-get clean
+sudo DEBIAN_FRONTEND=noninteractive apt-get clean
 echo "Done cleaning up downloaded package files."
 echo
 
