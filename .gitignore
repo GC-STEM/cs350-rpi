@@ -2,7 +2,6 @@
 # If there is a problem with it, submit a GitHub issue or pull request to fix it.
 
 # GC STEM configuration for student-facing repositories.
-# README.md
 .dev/
 .faculty/
 
