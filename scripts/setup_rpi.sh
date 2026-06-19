@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Raspberry Pi Setup Script
 #
-# This script sets up a Raspberry Pi OS environment. It is intended for students
-# in a Raspberry Pi course.
+# This script sets up a Raspberry Pi OS environment.
+# It is intended for students in a Raspberry Pi course.
 #
 # Usage:
 #   chmod +x scripts/setup_rpi.sh
