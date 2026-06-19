@@ -46,9 +46,11 @@ echo "This script will:"
 echo "  1. Remove old downloaded package files"
 echo "  2. Update the package list"
 echo "  3. Check available disk space"
-echo "  4. Upgrade installed system packages"
-echo "  5. Remove packages and files that are no longer needed"
-echo "  6. Reboot, shut down, or return to the command prompt"
+echo "  4. Fetch latest repository files from GitHub"
+echo "  5. Synchronize rpilib (Shared Course Library)"
+echo "  6. Upgrade installed system packages"
+echo "  7. Remove packages and files that are no longer needed"
+echo "  8. Reboot, shut down, or return to the command prompt"
 echo
 
 printf "Do you wish to continue with the update? (y/N): "
@@ -80,7 +82,7 @@ trap 'kill -0 "$SUDO_LOOP_PID" 2>/dev/null && kill "$SUDO_LOOP_PID"' EXIT
 # --------------------------------
 
 # Step 1: Remove old downloaded package files.
-echo "Step 1 of 6: Cleaning old downloaded package files..."
+echo "Step 1 of 8: Cleaning old downloaded package files..."
 available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
 available_mb=$((available_kb / 1024))
 echo "➜ Available space before cleaning: ${available_mb} MB"
@@ -95,13 +97,13 @@ echo "✔ Done cleaning old downloaded package files."
 echo
 
 # Step 2: Update the package list.
-echo "Step 2 of 6: Updating package list..."
+echo "Step 2 of 8: Updating package list..."
 sudo apt-get update
 echo "✔ Done updating package list."
 echo
 
 # Step 3: Check available disk space before upgrading.
-echo "Step 3 of 6: Checking available disk space..."
+echo "Step 3 of 8: Checking available disk space..."
 
 total_kb=$(df --output=size / | tail -n 1 | awk '{print $1}')
 available_kb=$(df --output=avail / | tail -n 1 | awk '{print $1}')
@@ -146,23 +148,68 @@ fi
 echo "✔ Disk space check complete."
 echo
 
-# Step 4: Upgrade installed packages.
-# apt-get dist-upgrade is the script-friendly form of a full system upgrade.
-echo "Step 4 of 6: Upgrading installed packages..."
+# Step 4: Fetch the latest repository contents from GitHub.
+echo "Step 4 of 8: Fetching latest course files from GitHub..."
+rm -rf /tmp/cs350-rpi
+if git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi; then
+    echo "✔ Done fetching repository updates."
+else
+    echo "❌ ERROR: Failed to clone repository from GitHub."
+    echo "Please check your internet connection and try again."
+    exit 1
+fi
+echo
+
+# Step 5: Synchronize shared library files (~/rpilib) with safety warning.
+echo "Step 5 of 8: Synchronizing shared course library (~/rpilib)..."
+
+if [ -d ~/rpilib ]; then
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo " WARNING: The script is about to update your ~/rpilib directory."
+    echo " If you have manually edited files inside ~/rpilib, those changes"
+    echo " will be overwritten to match the official course library!"
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo
+    printf "Do you wish to proceed with updating the library? (y/N): "
+    read -r sync_library_choice
+    echo
+
+    if [[ "${sync_library_choice,,}" == "y" ]]; then
+        echo "➜ Backing up current library state to /tmp/rpilib_old..."
+        rm -rf /tmp/rpilib_old
+        cp -a ~/rpilib /tmp/rpilib_old
+
+        echo "➜ Syncing fresh files from GitHub clone..."
+        rm -rf ~/rpilib
+        cp -a /tmp/cs350-rpi/rpilib ~/
+        echo "✔ Shared course library successfully updated."
+    else
+        echo "➜ Skipping library sync. Maintaining your current ~/rpilib files."
+    fi
+else
+    echo "➜ No existing library found. Deploying fresh copy of ~/rpilib..."
+    cp -a /tmp/cs350-rpi/rpilib ~/
+    echo "✔ Shared course library successfully deployed."
+fi
+echo
+
+# Step 6: Upgrade installed packages.
+echo "Step 6 of 8: Upgrading installed packages..."
 echo "➜ This step may take several minutes. Please wait..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
 echo "✔ Done upgrading packages."
 echo
 
-# Step 5: Remove packages and downloaded package files that are no longer needed.
-echo "Step 5 of 6: Cleaning up system packages and temporary files..."
+# Step 7: Remove packages and downloaded package files that are no longer needed.
+echo "Step 7 of 8: Cleaning up system packages and temporary files..."
 echo "➜ Removing unnecessary software dependencies..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 echo "✔ Done removing unnecessary packages."
 echo
 
-echo "➜ Purging downloaded package caches..."
+echo "➜ Purging downloaded package caches and repository clones..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get clean
+rm -rf /tmp/cs350-rpi
 echo "✔ Done cleaning up temporary files."
 echo
 
@@ -176,8 +223,8 @@ echo "========================================"
 echo "Available space on /: ${available_mb} MB"
 echo
 
-# Step 6: Let the student choose what to do next.
-echo "Step 6 of 6: Choose what to do next."
+# Step 8: Let the student choose what to do next.
+echo "Step 8 of 8: Choose what to do next."
 echo
 echo "   1. Reboot the Raspberry Pi"
 echo "   2. Shut down the Raspberry Pi"
