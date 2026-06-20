@@ -59,11 +59,11 @@ After the interactive script finishes executing, it will copy the files into pla
 │
 ├── rpilib/               # Reusable Python library for RPi projects
 │   ├── comms/            # Package for communication helper modules
+│   ├── config.py         # Module for shared default settings and constants
 │   ├── displays/         # Package for display device helper modules
-│   ├── sensors/          # Package for sensor device helper modules
 │   ├── gpio/             # Package for GPIO helper modules
 │   ├── __init__.py       # Initialize the main rpilib package
-│   ├── config.py         # Module for shared default settings and constants
+│   ├── sensors/          # Package for sensor device helper modules
 │   └── timing.py         # Module for shared timing values and timing helpers
 │
 └── scripts/              # Reusable Raspberry Pi shell scripts
