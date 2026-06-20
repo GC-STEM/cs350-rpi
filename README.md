@@ -15,7 +15,7 @@ Before you use this repository, complete these tasks:
 1. Assemble your Raspberry Pi.
 2. Create the bootable microSD card.
 3. Power on your Raspberry Pi.
-4. Connect your Raspberry Pi to the same network as your main computer.
+4. Connect your Raspberry Pi to the same network as your main computer (Wi-Fi or Ethernet).
 
 ## Getting Started
 
@@ -26,7 +26,7 @@ Follow these steps from a terminal window on your main computer. First, you will
 ```bash
 ssh-keygen -R rpi
 ssh-keygen -R rpi.local
-ssh stu@rpi.local
+ssh stu@rpi
 ```
 
 If this is your first time connecting to the Raspberry Pi, you may be asked to accept the Raspberry Pi SSH host key. Type `yes` to accept and continue. The host key helps your computer recognize that it is connecting to the same Raspberry Pi in the future.
