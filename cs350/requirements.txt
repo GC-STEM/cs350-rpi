@@ -1,6 +1,7 @@
 # CS 350 Raspberry Pi Python package requirements
 # Lists pip-installed third-party packages directly needed by the course Python files.
 # GPIO packages are not listed here because they are installed with APT on Raspberry Pi OS.
+# This includes gpiozero and any Raspberry Pi GPIO backend packages needed by the OS.
 #
 # Normal setup:
 # The ~/scripts/setup_rpi.sh script installs these packages into the course
