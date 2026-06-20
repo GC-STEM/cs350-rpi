@@ -1,0 +1,37 @@
+# CS 350 Raspberry Pi Python package requirements
+# Lists pip-installed third-party packages directly needed by the course Python files.
+# GPIO packages are not listed here because they are installed with APT on Raspberry Pi OS.
+#
+# Normal setup:
+# The ~/scripts/setup_rpi.sh script installs these packages into the course
+# virtual environment when students first set up their Raspberry Pi system.
+#
+# Students should only run pip install -r requirements.txt manually if:
+#   1. The setup script did not complete successfully.
+#   2. They deleted and recreated the .venv directory.
+#   3. Their instructor tells them to reinstall the Python packages.
+#
+# Before running pip manually, students should confirm that the course virtual
+# environment is active. The command prompt should start with:
+#   (.venv) stu@rpi:~/cs350 $
+#
+# The Python interpreter should be:
+#   /home/stu/cs350/.venv/bin/python
+
+# Python serial communication support.
+# Provides the `serial` module used for UART / USB-to-TTL communication.
+pyserial
+
+# State machine support.
+# Provides the `statemachine` module used to define states, transitions, and events.
+python-statemachine
+
+# Adafruit character LCD display library.
+# Provides the `adafruit_character_lcd` module used to control the LCD display.
+# Also installs Adafruit Blinka dependencies used for `board` and `digitalio`.
+adafruit-circuitpython-charlcd
+
+# Adafruit AHTx0 temperature and humidity sensor library.
+# Provides the `adafruit_ahtx0` module used with the temperature/humidity sensor.
+# Also installs Adafruit Blinka dependencies used for I2C communication.
+adafruit-circuitpython-ahtx0
