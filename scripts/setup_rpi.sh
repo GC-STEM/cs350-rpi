@@ -253,6 +253,14 @@ fi
 # Create the direnv configuration file for the CS 350 directory.
 cat > ~/cs350/.envrc <<'EOF'
 source .venv/bin/activate
+
+# Intercept the prompt to show (venv) while inside this directory tree
+show_virtual_env() {
+  if [ -n "$VIRTUAL_ENV" ]; then
+    echo "($(basename "$VIRTUAL_ENV")) "
+  fi
+}
+export PS1="\$(show_virtual_env)$PS1"
 EOF
 
 # Approve the .envrc file so direnv can use it.
