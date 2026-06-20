@@ -1,100 +1,209 @@
-"""Provide reusable helpers for [module purpose].
+"""Provide reusable PWM LED helpers for Raspberry Pi GPIO pins.
 
-This module is part of the rpilib library. It contains [briefly describe
-what this module provides] for Raspberry Pi projects.
+This module is part of the rpilib library. It provides helper functions for
+controlling LEDs with pulse-width modulation, or PWM.
 
-The functions and classes in this file are designed to be small, readable,
-and reusable. Students should be able to import this module into their own
-programs without changing the module source code.
+PWM lets a program change LED brightness by turning a GPIO output on and off
+very quickly. The LED appears dimmer or brighter depending on the duty cycle.
+A duty cycle is the percentage of time the signal is on during one PWM cycle.
+
+The functions in this file use gpiozero.PWMLED. The gpiozero library handles
+much of the GPIO setup and cleanup for us while still letting students work
+directly with GPIO pin numbers.
 
 Example:
-    from rpilib.[package_name].[module_name] import [function_or_class_name]
+    from rpilib.gpio.pwm import create_pwm_led, pulse, set_brightness
 
-    [function_or_class_name](parameter=value)
+    red_led = create_pwm_led(pin=18)
+    set_brightness(red_led, brightness=0.5)
+    pulse(red_led)
 
 Future improvements:
-    - Add [possible real-world improvement].
-    - Add [another possible extension if useful].
+    - Add support for LED fade patterns with custom timing.
+    - Add support for RGB LEDs controlled by three PWM pins.
 """
 
-# Standard library imports
-# Example: from time import sleep
 from typing import Final
 
+from gpiozero import PWMLED
 
-# Third-party imports
-# Example: from gpiozero import LED
-
-
-# Local rpilib imports
-# Example: from rpilib.config import DEFAULT_LED_PIN
+from rpilib.config import DEFAULT_PWM_FREQUENCY_HZ, DEFAULT_RED_LED_PIN
 
 
-# Module-level constants
-# Constants use UPPER_SNAKE_CASE because their values should not change
-# while the program is running.
-#
-# Final tells readers and type-checking tools that this value should be
-# treated as a constant.
-DEFAULT_VALUE: Final[str] = "replace_me"
+# ---------------------------------------------------------------------------
+# PWM LED defaults
+# ---------------------------------------------------------------------------
+# The default pin and frequency come from rpilib.config so shared course wiring
+# and hardware values are stored in one place.
+DEFAULT_PWM_LED_PIN: Final[int] = DEFAULT_RED_LED_PIN
+DEFAULT_FREQUENCY_HZ: Final[int] = DEFAULT_PWM_FREQUENCY_HZ
+
+# gpiozero.PWMLED brightness values use the range 0.0 through 1.0.
+# 0.0 means fully off. 1.0 means fully on.
+MIN_BRIGHTNESS: Final[float] = 0.0
+MAX_BRIGHTNESS: Final[float] = 1.0
+
+# Pulse timing values are measured in seconds.
+DEFAULT_FADE_IN_SECONDS: Final[float] = 1.0
+DEFAULT_FADE_OUT_SECONDS: Final[float] = 1.0
 
 
-class ExampleClass:
-    """Represent [what this class models or controls].
-
-    This class provides a reusable interface for [hardware device,
-    communication method, or helper behavior].
-
-    Attributes:
-        example_attribute: Briefly explain what this attribute stores.
-    """
-
-    def __init__(self, example_parameter: str = DEFAULT_VALUE) -> None:
-        """Initialize an ExampleClass object.
-
-        Args:
-            example_parameter: Briefly explain what this parameter controls.
-        """
-        # Store parameter values as object attributes so other methods can
-        # use them later.
-        self.example_attribute: str = example_parameter
-
-    def example_method(self) -> str:
-        """Perform one clear action.
-
-        Returns:
-            A brief description of what this method returns.
-        """
-        result: str = self.example_attribute
-        return result
-
-
-def example_function(example_parameter: str = DEFAULT_VALUE) -> str:
-    """Perform one reusable task.
+def create_pwm_led(
+    pin: int = DEFAULT_PWM_LED_PIN,
+    frequency_hz: int = DEFAULT_FREQUENCY_HZ,
+) -> PWMLED:
+    """Create and return a PWMLED object for one GPIO pin.
 
     Args:
-        example_parameter: Briefly explain what this parameter controls.
+        pin: Broadcom GPIO pin number connected to the LED.
+        frequency_hz: PWM frequency in hertz. Hertz means cycles per second.
 
     Returns:
-        A brief description of the returned value.
+        A gpiozero PWMLED object that can change brightness or pulse.
+
+    Raises:
+        ValueError: If frequency_hz is less than one.
     """
-    result: str = example_parameter
-    return result
+    led_pin: int = pin
+    pwm_frequency_hz: int = frequency_hz
+    pwm_led: PWMLED
+
+    if pwm_frequency_hz < 1:
+        raise ValueError("PWM frequency must be one hertz or greater.")
+
+    # GPIO pin numbers in this library use Broadcom GPIO numbering. This is the
+    # same numbering style used by gpiozero when an integer pin number is given.
+    pwm_led = PWMLED(led_pin, frequency=pwm_frequency_hz)
+
+    return pwm_led
+
+
+def set_brightness(led: PWMLED, brightness: float) -> None:
+    """Set the brightness of a PWM LED.
+
+    Args:
+        led: The gpiozero PWMLED object to update.
+        brightness: LED brightness from 0.0 through 1.0.
+
+    Raises:
+        ValueError: If brightness is outside the valid range.
+    """
+    target_led: PWMLED = led
+    brightness_level: float = brightness
+
+    if brightness_level < MIN_BRIGHTNESS or brightness_level > MAX_BRIGHTNESS:
+        raise ValueError("Brightness must be between 0.0 and 1.0.")
+
+    target_led.value = brightness_level
+
+
+def turn_on(led: PWMLED) -> None:
+    """Turn on a PWM LED at full brightness.
+
+    Args:
+        led: The gpiozero PWMLED object to turn on.
+    """
+    target_led: PWMLED = led
+
+    target_led.on()
+
+
+def turn_off(led: PWMLED) -> None:
+    """Turn off a PWM LED.
+
+    Args:
+        led: The gpiozero PWMLED object to turn off.
+    """
+    target_led: PWMLED = led
+
+    target_led.off()
+
+
+def pulse(
+    led: PWMLED,
+    fade_in_seconds: float = DEFAULT_FADE_IN_SECONDS,
+    fade_out_seconds: float = DEFAULT_FADE_OUT_SECONDS,
+    repetitions: int | None = None,
+    background: bool = True,
+) -> None:
+    """Fade a PWM LED in and out.
+
+    Args:
+        led: The gpiozero PWMLED object to pulse.
+        fade_in_seconds: Number of seconds used to fade from off to on.
+        fade_out_seconds: Number of seconds used to fade from on to off.
+        repetitions: Number of times to repeat the pulse pattern. Use None to
+            pulse continuously.
+        background: If True, pulsing happens in the background while the
+            program continues. If False, the program waits until pulsing ends.
+
+    Raises:
+        ValueError: If fade timing or repetitions are invalid.
+    """
+    target_led: PWMLED = led
+    pulse_fade_in_seconds: float = fade_in_seconds
+    pulse_fade_out_seconds: float = fade_out_seconds
+    pulse_repetitions: int | None = repetitions
+    run_in_background: bool = background
+
+    if pulse_fade_in_seconds < 0:
+        raise ValueError("Fade-in time must be zero or greater.")
+
+    if pulse_fade_out_seconds < 0:
+        raise ValueError("Fade-out time must be zero or greater.")
+
+    if pulse_repetitions is not None and pulse_repetitions < 1:
+        raise ValueError("Pulse repetitions must be one or greater.")
+
+    target_led.pulse(
+        fade_in_time=pulse_fade_in_seconds,
+        fade_out_time=pulse_fade_out_seconds,
+        n=pulse_repetitions,
+        background=run_in_background,
+    )
+
+
+def close_pwm_led(led: PWMLED) -> None:
+    """Release the GPIO resources used by a PWM LED.
+
+    gpiozero usually handles cleanup when a program exits. This helper is still
+    useful when a program creates and removes hardware objects while it is
+    running.
+
+    Args:
+        led: The gpiozero PWMLED object to close.
+    """
+    target_led: PWMLED = led
+
+    # Closing a gpiozero device releases the pin so another object or program
+    # can use it later.
+    target_led.close()
 
 
 def main() -> None:
-    """Run a small demonstration when this module is executed directly.
+    """Run a short PWM LED demonstration when executed directly.
 
     The main function is not used when this module is imported into another
-    program. It gives students and instructors a quick way to test the module.
+    program. It gives students and instructors a quick way to test the module
+    on a Raspberry Pi with an LED connected to the default pin.
     """
-    message: str = "Running module demonstration..."
-    result: str = ""
+    demo_led: PWMLED
+    message: str = f"Testing PWM LED on GPIO {DEFAULT_PWM_LED_PIN}"
 
     print(message)
 
-    result = example_function()
-    print(f"Example result: {result}")
+    demo_led = create_pwm_led()
+    pulse(
+        demo_led,
+        fade_in_seconds=0.5,
+        fade_out_seconds=0.5,
+        repetitions=3,
+        background=False,
+    )
+    turn_off(demo_led)
+    close_pwm_led(demo_led)
+
+    print("PWM LED test complete.")
 
 
 if __name__ == "__main__":
