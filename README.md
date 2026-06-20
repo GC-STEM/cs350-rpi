@@ -1,11 +1,13 @@
 # CS 350 – Raspberry Pi Repository
 
 ![CS 350 Repo Card image](./assets/repo_card.png)
-<!-->
+
+<!--
 ## ⚠️ Under Construction
 
 This repository is incomplete and under active development. Code, documentation, structure, and features may change frequently. Use with caution, and check back for updates.
 -->
+
 ## Prerequisites
 
 Before you use this repository, complete these tasks:
