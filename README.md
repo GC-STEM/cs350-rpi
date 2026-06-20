@@ -1,6 +1,6 @@
 # CS 350 – Raspberry Pi Repository
 
-![CS 350 Repo Card image](https://github.com/GC-STEM/cs350-rpi/raw/main/assets/repo-card.png)
+![CS 350 Repo Card image](./assets/repo_card.png)
 
 ## ⚠️ Under Construction
 
