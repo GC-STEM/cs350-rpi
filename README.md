@@ -64,6 +64,7 @@ After the interactive script finishes executing, it will copy the files into pla
 │   ├── gpio/             # Package for GPIO helper modules
 │   ├── __init__.py       # Initialize the main rpilib package
 │   ├── sensors/          # Package for sensor device helper modules
+│   ├── testing/          # Package for testing that does not require hardware
 │   └── timing.py         # Module for shared timing values and timing helpers
 │
 └── scripts/              # Reusable Raspberry Pi shell scripts
