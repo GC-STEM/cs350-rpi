@@ -57,8 +57,14 @@ After the interactive script finishes executing, it will copy the files into pla
 │   ├── m7/               # Module 7 | Final Project: Thermostat Lab
 │   └── requirements.txt  # Course Python dependencies
 │
-├── rpilib/               # Future Python library for Raspberry Pi
-│   └── __init__.py       # Initialize the library (under active development)
+├── rpilib/               # Reusable Python library for RPi projects
+│   ├── comms/            # Package for communication helper modules
+│   ├── displays/         # Package for display device helper modules
+│   ├── sensors/          # Package for sensor device helper modules
+│   ├── gpio/             # Package for GPIO helper modules
+│   ├── __init__.py       # Initialize the main rpilib package
+│   ├── config.py         # Module for shared default settings and constants
+│   └── timing.py         # Module for shared timing values and timing helpers
 │
 └── scripts/              # Reusable Raspberry Pi shell scripts
     ├── setup_rpi.sh      # Set up Raspberry Pi environment
