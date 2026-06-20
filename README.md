@@ -60,7 +60,6 @@ After the interactive script finishes executing, it will copy the files into pla
 │   ├── m6/               # Module 6 | Assignment: Add Sensor
 │   ├── m7/               # Module 7 | Final Project: Thermostat Lab
 │   └── requirements.txt  # Course Python dependencies
-│
 ├── rpilib/               # Reusable Python library for RPi projects
 │   ├── comms/            # Package for communication helper modules
 │   ├── config.py         # Module for shared default settings and constants
@@ -70,7 +69,6 @@ After the interactive script finishes executing, it will copy the files into pla
 │   ├── sensors/          # Package for sensor device helper modules
 │   ├── testing/          # Package for testing that does not require hardware
 │   └── timing.py         # Module for shared timing values and timing helpers
-│
 └── scripts/              # Reusable Raspberry Pi shell scripts
     ├── setup_rpi.sh      # Set up Raspberry Pi environment
     ├── smoke_rpi.sh      # Run smoke tests on Raspberry Pi
