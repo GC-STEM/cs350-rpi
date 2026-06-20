@@ -250,17 +250,30 @@ if ! grep -q 'direnv hook bash' ~/.bashrc; then
     echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 fi
 
+# Add the standalone prompt decorator to ~/.bashrc if it is not already present.
+if ! grep -q 'set_venv_prompt' ~/.bashrc; then
+    cat << 'EOF' >> ~/.bashrc
+
+# Automatically prepend virtual environment status to prompt
+set_venv_prompt() {
+    if [ -n "$VIRTUAL_ENV" ]; then
+        local venv_name=\$(basename "\$VIRTUAL_ENV")
+        if [[ "\$PS1" != "(\$venv_name) "* ]]; then
+            export PS1="(\$venv_name) \$PS1"
+        fi
+    else
+        export PS1="\${PS1#\(*\) }"
+    fi
+}
+if [[ ! "\$PROMPT_COMMAND" =~ set_venv_prompt ]]; then
+    export PROMPT_COMMAND="set_venv_prompt;\$PROMPT_COMMAND"
+fi
+EOF
+fi
+
 # Create the direnv configuration file for the CS 350 directory.
 cat > ~/cs350/.envrc <<'EOF'
 source .venv/bin/activate
-
-# Intercept the prompt to show (venv) while inside this directory tree
-show_virtual_env() {
-  if [ -n "$VIRTUAL_ENV" ]; then
-    echo "($(basename "$VIRTUAL_ENV")) "
-  fi
-}
-export PS1="\$(show_virtual_env)$PS1"
 EOF
 
 # Approve the .envrc file so direnv can use it.
