@@ -294,29 +294,32 @@ cat << 'EOF' >> "$BASHRC_FILE"
 
 # >>> CS 350 virtual environment prompt >>>
 # Show "(.venv)" in the prompt when direnv activates ~/cs350/.venv.
+
+# Save the normal prompt once, after the standard Raspberry Pi prompt is built.
+__CS350_BASE_PS1="${PS1#(.venv) }"
+
 __cs350_venv_prompt() {
     local previous_status=$?
 
     if [ -n "${VIRTUAL_ENV:-}" ] && [ "$VIRTUAL_ENV" = "${HOME}/cs350/.venv" ]; then
-        if [[ "$PS1" != "(.venv) "* ]]; then
-            PS1="${PS1#(.venv) }"
-            PS1="(.venv) $PS1"
-        fi
+        PS1="(.venv) ${__CS350_BASE_PS1}"
     else
-        PS1="${PS1#(.venv) }"
+        PS1="${__CS350_BASE_PS1}"
     fi
 
     return "$previous_status"
 }
 
-if [[ ";${PROMPT_COMMAND:-};" != *";__cs350_venv_prompt;"* ]]; then
-    PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }__cs350_venv_prompt"
-fi
+case ";${PROMPT_COMMAND:-};" in
+    *";__cs350_venv_prompt;"*) ;;
+    *) PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }__cs350_venv_prompt" ;;
+esac
 # <<< CS 350 virtual environment prompt <<<
 EOF
 
 # Create the direnv configuration file for the CS 350 directory.
 cat > ~/cs350/.envrc <<'EOF'
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 source "$HOME/cs350/.venv/bin/activate"
 EOF
 
