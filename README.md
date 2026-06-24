@@ -72,7 +72,8 @@ After the interactive script finishes executing, it will copy the files into pla
 └── scripts/              # Reusable Raspberry Pi shell scripts
     ├── setup_rpi.sh      # Set up Raspberry Pi environment
     ├── smoke_rpi.sh      # Run smoke tests on Raspberry Pi
-    └── update_rpi.sh     # Update Raspberry Pi environment
+    ├── update_rpi.sh     # Update Raspberry Pi environment
+    └── verify_rpi.sh     # Verify your RPi enviroment meets course requirements
 ```
 
 > *Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure. These files support maintenance, documentation, testing, or automatic virtual environment activation. Do not modify those hidden assets. Focus your coding tasks inside the standard course directories listed above.
