@@ -244,36 +244,80 @@ echo "➜ Installing dependencies from requirements.txt (this may take a few min
 echo "➜ Configuring automatic virtual environment activation..."
 
 # Add the direnv hook to ~/.bashrc if it is not already present.
-if ! grep -q 'direnv hook bash' ~/.bashrc; then
-    echo '' >> ~/.bashrc
-    echo '# Enable direnv for project-specific environment settings.' >> ~/.bashrc
-    echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+BASHRC_FILE="${HOME}/.bashrc"
+touch "$BASHRC_FILE"
+
+if ! grep -q 'direnv hook bash' "$BASHRC_FILE"; then
+    echo '' >> "$BASHRC_FILE"
+    echo '# Enable direnv for project-specific environment settings.' >> "$BASHRC_FILE"
+    echo 'eval "$(direnv hook bash)"' >> "$BASHRC_FILE"
 fi
 
-# Add the standalone prompt decorator to ~/.bashrc if it is not already present.
-if ! grep -q 'set_venv_prompt' ~/.bashrc; then
-    cat << 'EOF' >> ~/.bashrc
+# Remove older CS 350 prompt helpers before writing the current version.
+# This repairs the earlier block that accidentally wrote escaped Bash syntax.
+tmp_bashrc="$(mktemp)"
+awk '
+    BEGIN { skip_managed = 0; skip_legacy = 0; seen_prompt_command = 0 }
 
-# Automatically prepend virtual environment status to prompt
-set_venv_prompt() {
-    if [ -n "$VIRTUAL_ENV" ]; then
-        local venv_name=\$(basename "\$VIRTUAL_ENV")
-        if [[ "\$PS1" != "(\$venv_name) "* ]]; then
-            export PS1="(\$venv_name) \$PS1"
+    /^# >>> CS 350 virtual environment prompt >>>$/ {
+        skip_managed = 1
+        next
+    }
+
+    /^# <<< CS 350 virtual environment prompt <<<$/{
+        skip_managed = 0
+        next
+    }
+
+    /^# Automatically prepend virtual environment status to prompt$/ {
+        skip_legacy = 1
+        seen_prompt_command = 0
+        next
+    }
+
+    skip_legacy {
+        if ($0 ~ /PROMPT_COMMAND/ && $0 ~ /set_venv_prompt/) {
+            seen_prompt_command = 1
+        }
+        if (seen_prompt_command && $0 == "fi") {
+            skip_legacy = 0
+            seen_prompt_command = 0
+        }
+        next
+    }
+
+    !skip_managed { print }
+' "$BASHRC_FILE" > "$tmp_bashrc"
+mv "$tmp_bashrc" "$BASHRC_FILE"
+
+cat << 'EOF' >> "$BASHRC_FILE"
+
+# >>> CS 350 virtual environment prompt >>>
+# Show "(.venv)" in the prompt when direnv activates ~/cs350/.venv.
+__cs350_venv_prompt() {
+    local previous_status=$?
+
+    if [ -n "${VIRTUAL_ENV:-}" ] && [ "$VIRTUAL_ENV" = "${HOME}/cs350/.venv" ]; then
+        if [[ "$PS1" != "(.venv) "* ]]; then
+            PS1="${PS1#(.venv) }"
+            PS1="(.venv) $PS1"
         fi
     else
-        export PS1="\${PS1#\(*\) }"
+        PS1="${PS1#(.venv) }"
     fi
+
+    return "$previous_status"
 }
-if [[ ! "\$PROMPT_COMMAND" =~ set_venv_prompt ]]; then
-    export PROMPT_COMMAND="set_venv_prompt;\$PROMPT_COMMAND"
+
+if [[ ";${PROMPT_COMMAND:-};" != *";__cs350_venv_prompt;"* ]]; then
+    PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }__cs350_venv_prompt"
 fi
+# <<< CS 350 virtual environment prompt <<<
 EOF
-fi
 
 # Create the direnv configuration file for the CS 350 directory.
 cat > ~/cs350/.envrc <<'EOF'
-source .venv/bin/activate
+source "$HOME/cs350/.venv/bin/activate"
 EOF
 
 # Approve the .envrc file so direnv can use it.
