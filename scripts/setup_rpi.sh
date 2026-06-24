@@ -340,8 +340,9 @@ echo
 # Make the scripts in ~/scripts/ executable.
 echo "Making setup and update scripts executable..."
 chmod +x ~/scripts/setup_rpi.sh
-chmod +x ~/scripts/update_rpi.sh
 chmod +x ~/scripts/smoke_rpi.sh
+chmod +x ~/scripts/update_rpi.sh
+chmod +x ~/scripts/verify_rpi.sh
 echo "✔ Done setting script permissions."
 echo
 
