@@ -33,10 +33,14 @@ pyserial
 lgpio
 gpiozero
 
-
 # State machine support.
 # Provides the `statemachine` module used to define states, transitions, and events.
 python-statemachine
+
+# Adafruit Blinka compatibility layer.
+# Provides the `board`, `busio`, and `digitalio` modules used to access
+# Raspberry Pi GPIO and I2C hardware from Adafruit CircuitPython libraries.
+adafruit-blinka
 
 # Adafruit character LCD display library.
 # Provides the `adafruit_character_lcd` module used to control the LCD display.
