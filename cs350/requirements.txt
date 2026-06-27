@@ -23,6 +23,17 @@
 # Provides the `serial` module used for UART / USB-to-TTL communication.
 pyserial
 
+# GPIO Zero and lgpio support.
+# Provides the `gpiozero` module used by button and PWM LED lab files.
+# Provides the `lgpio` backend used by gpiozero for GPIO input events such as
+# button presses. These packages are included here because APT-installed Python
+# packages such as python3-gpiozero may not be visible inside the course virtual
+# environment. The setup script must install the OS-level packages `swig` and
+# `liblgpio-dev` before pip installs this requirements file.
+lgpio
+gpiozero
+
+
 # State machine support.
 # Provides the `statemachine` module used to define states, transitions, and events.
 python-statemachine

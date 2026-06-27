@@ -208,7 +208,9 @@ echo "Step 4 of 8: Installing command-line tools..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y direnv
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gh
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y liblgpio-dev
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y shellcheck
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y swig
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tree
 echo "✔ Done installing command-line tools."
 echo
