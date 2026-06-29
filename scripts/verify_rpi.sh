@@ -4,7 +4,8 @@
 # This script verifies that the Raspberry Pi OS environment appears to have
 # been configured correctly by the CS 350 setup script. It checks course files,
 # system tools, Python packages, the virtual environment, direnv activation,
-# script permissions, and cleanup results.
+# course Python path settings, hardware interface settings, script permissions,
+# and cleanup results.
 #
 # Usage:
 #   chmod +x scripts/verify_rpi.sh
@@ -158,6 +159,18 @@ check_bashrc_text() {
     fi
 }
 
+check_envrc_text() {
+    local search_text="$1"
+    local description="$2"
+
+    begin_check
+    if [ -f "${CS350_DIR}/.envrc" ] && grep -Fq "${search_text}" "${CS350_DIR}/.envrc"; then
+        record_pass "${description} found in ~/cs350/.envrc"
+    else
+        record_fail "${description} not found in ~/cs350/.envrc"
+    fi
+}
+
 check_pip_package() {
     local package_name="$1"
 
@@ -166,6 +179,92 @@ check_pip_package() {
         record_pass "Python package installed in .venv: ${package_name}"
     else
         record_fail "Python package missing from .venv: ${package_name}"
+    fi
+}
+
+check_direnv_python_path_entry() {
+    local expected_path="$1"
+    local description="$2"
+    local direnv_error_file="/tmp/cs350_direnv_python_path_error.$$"
+
+    begin_check
+    if command -v direnv >/dev/null 2>&1 && [ -f "${CS350_DIR}/.envrc" ]; then
+        if (
+            cd "${CS350_DIR}"                 && eval "$(direnv export bash 2>"${direnv_error_file}")"                 && python - "${expected_path}" <<'PY'
+import os
+import sys
+
+expected_path = os.path.normpath(sys.argv[1])
+python_paths = {os.path.normpath(path) for path in sys.path if path}
+
+raise SystemExit(0 if expected_path in python_paths else 1)
+PY
+        ); then
+            record_pass "${description} is available on Python path."
+            rm -f "${direnv_error_file}"
+        else
+            record_fail "${description} is not available on Python path. Run: cd ~/cs350 && direnv allow"
+            rm -f "${direnv_error_file}"
+        fi
+    else
+        record_fail "Cannot verify ${description} because direnv or .envrc is missing."
+    fi
+}
+
+check_direnv_python_import() {
+    local module_name="$1"
+    local description="$2"
+    local direnv_error_file="/tmp/cs350_direnv_import_error.$$"
+
+    begin_check
+    if command -v direnv >/dev/null 2>&1 && [ -f "${CS350_DIR}/.envrc" ]; then
+        if (
+            cd "${CS350_DIR}"                 && eval "$(direnv export bash 2>"${direnv_error_file}")"                 && python -c "import ${module_name}" >/dev/null 2>&1
+        ); then
+            record_pass "Python can import ${description}."
+            rm -f "${direnv_error_file}"
+        else
+            record_fail "Python cannot import ${description}. Check ~/cs350/.envrc and PYTHONPATH."
+            rm -f "${direnv_error_file}"
+        fi
+    else
+        record_fail "Cannot verify Python import for ${description} because direnv or .envrc is missing."
+    fi
+}
+
+check_raspi_config_setting() {
+    local setting_command="$1"
+    local expected_value="$2"
+    local description="$3"
+    local repair_command="$4"
+    local actual_value=""
+
+    begin_check
+    if command -v raspi-config >/dev/null 2>&1; then
+        if actual_value="$(raspi-config nonint "${setting_command}" 2>/dev/null | tr -d '[:space:]')"; then
+            if [ "${actual_value}" = "${expected_value}" ]; then
+                record_pass "${description}."
+            else
+                record_fail "${description} expected ${expected_value}, found ${actual_value:-unknown}. Run: ${repair_command}"
+            fi
+        else
+            record_fail "Could not read ${description} with raspi-config. Run: ${repair_command}"
+        fi
+    else
+        record_fail "Cannot verify ${description} because raspi-config is missing."
+    fi
+}
+
+check_runtime_device_warning() {
+    local path="$1"
+    local description="$2"
+    local reboot_hint="$3"
+
+    begin_check
+    if [ -e "${path}" ]; then
+        record_pass "${description} detected: ${path}"
+    else
+        record_warning "${description} not detected at ${path}. ${reboot_hint}"
     fi
 }
 
@@ -189,8 +288,8 @@ echo "  3. Check available disk space"
 echo "  4. Verify command-line tools"
 echo "  5. Verify system Python packages"
 echo "  6. Verify the Python virtual environment"
-echo "  7. Verify automatic virtual environment activation"
-echo "  8. Verify script permissions and show a summary"
+echo "  7. Verify automatic virtual environment activation and Python path"
+echo "  8. Verify hardware settings, script permissions, and show a summary"
 echo
 
 echo "Current user: ${RPI_USER}"
@@ -281,16 +380,22 @@ echo
 
 # Step 4: Verify command-line tools.
 echo "Step 4 of 8: Verifying command-line tools..."
+check_apt_package "build-essential"
 check_apt_package "direnv"
 check_apt_package "gh"
 check_apt_package "git"
+check_apt_package "liblgpio-dev"
+check_apt_package "raspi-config"
 check_apt_package "shellcheck"
+check_apt_package "swig"
 check_apt_package "tree"
 
 check_command "direnv" "direnv"
 check_command "gh" "GitHub CLI"
 check_command "git" "Git"
+check_command "raspi-config" "Raspberry Pi configuration tool"
 check_command "shellcheck" "ShellCheck"
+check_command "swig" "SWIG"
 check_command "tree" "tree"
 echo "✔ Done verifying command-line tools."
 echo
@@ -298,6 +403,7 @@ echo
 # Step 5: Verify system Python packages.
 echo "Step 5 of 8: Verifying system Python packages..."
 check_apt_package "python3-full"
+check_apt_package "python3-dev"
 check_apt_package "python3-venv"
 check_apt_package "python3-pip"
 check_apt_package "python3-rpi.gpio"
@@ -355,8 +461,8 @@ fi
 echo "✔ Done verifying Python virtual environment."
 echo
 
-# Step 7: Verify automatic virtual environment activation.
-echo "Step 7 of 8: Verifying automatic virtual environment activation..."
+# Step 7: Verify automatic virtual environment activation and Python path.
+echo "Step 7 of 8: Verifying automatic virtual environment activation and Python path..."
 check_file "${CS350_DIR}/.envrc" "direnv project configuration"
 
 begin_check
@@ -365,6 +471,11 @@ if [ -f "${CS350_DIR}/.envrc" ] && grep -Fq 'source "$HOME/cs350/.venv/bin/activ
 else
     record_fail "~/${CS350_DIR#${HOME}/}/.envrc does not point to the course virtual environment."
 fi
+
+check_envrc_text 'export VIRTUAL_ENV_DISABLE_PROMPT=1' "Virtual environment prompt control"
+check_envrc_text 'course_python_path="$HOME:$HOME/rpilib:$HOME/cs350"' "Base CS 350 Python path"
+check_envrc_text 'for module_dir in "$HOME"/cs350/*/; do' "Module-folder Python path loop"
+check_envrc_text 'export PYTHONPATH="${course_python_path}${PYTHONPATH:+:${PYTHONPATH}}"' "PYTHONPATH export command"
 
 check_bashrc_text 'eval "$(direnv hook bash)"' "direnv Bash hook"
 check_bashrc_text '# >>> CS 350 virtual environment prompt >>>' "CS 350 prompt block start marker"
@@ -385,11 +496,42 @@ else
     record_fail "Cannot verify direnv export because direnv or .envrc is missing."
 fi
 
-echo "✔ Done verifying automatic virtual environment activation."
+begin_check
+if command -v direnv >/dev/null 2>&1 && [ -f "${CS350_DIR}/.envrc" ]; then
+    if (cd "${CS350_DIR}" && direnv export bash 2>/tmp/cs350_direnv_error.$$ | grep -q 'PYTHONPATH'); then
+        record_pass "direnv can export the course Python path."
+        rm -f "/tmp/cs350_direnv_error.$$"
+    else
+        record_fail "direnv cannot export the course Python path. Run: cd ~/cs350 && direnv allow"
+        rm -f "/tmp/cs350_direnv_error.$$"
+    fi
+else
+    record_fail "Cannot verify PYTHONPATH export because direnv or .envrc is missing."
+fi
+
+check_direnv_python_path_entry "${HOME}" "Home directory for rpilib package imports"
+check_direnv_python_path_entry "${RPILIB_DIR}" "Shared course library directory"
+check_direnv_python_path_entry "${CS350_DIR}" "Course materials directory"
+
+for module_dir in m1 m2 m3 m4 m5 m6 m7; do
+    check_direnv_python_path_entry "${CS350_DIR}/${module_dir}" "Course module directory ${module_dir}"
+done
+
+check_direnv_python_import "rpilib" "rpilib package"
+check_direnv_python_import "rpilib.config" "rpilib.config module"
+
+echo "✔ Done verifying automatic virtual environment activation and Python path."
 echo
 
-# Step 8: Verify script permissions and show summary.
-echo "Step 8 of 8: Verifying script permissions and cleanup state..."
+# Step 8: Verify hardware settings, script permissions, and show summary.
+echo "Step 8 of 8: Verifying hardware settings, script permissions, and cleanup state..."
+check_raspi_config_setting "get_serial_hw" "0" "UART hardware is enabled" "sudo raspi-config nonint do_serial_hw 0"
+check_raspi_config_setting "get_serial_cons" "1" "UART serial console is disabled" "sudo raspi-config nonint do_serial_cons 1"
+check_raspi_config_setting "get_i2c" "0" "I2C hardware is enabled" "sudo raspi-config nonint do_i2c 0"
+
+check_runtime_device_warning "/dev/serial0" "Runtime UART device" "A reboot may be required after setup."
+check_runtime_device_warning "/dev/i2c-1" "Runtime I2C device" "A reboot may be required after setup."
+
 check_executable_file "${SCRIPTS_DIR}/setup_rpi.sh" "Setup script"
 check_executable_file "${SCRIPTS_DIR}/update_rpi.sh" "Update script"
 check_executable_file "${SCRIPTS_DIR}/smoke_rpi.sh" "Smoke-test script"
@@ -405,7 +547,7 @@ else
     record_pass "Downloaded APT package cache is clean."
 fi
 
-echo "✔ Done verifying script permissions and cleanup state."
+echo "✔ Done verifying hardware settings, script permissions, and cleanup state."
 echo
 
 echo "========================================"
@@ -423,6 +565,8 @@ print_version "venv python" "${VENV_DIR}/bin/python" --version
 print_version "git" git --version
 print_version "gh" gh --version
 print_version "direnv" direnv version
+print_version "raspi-config" raspi-config version
+print_version "swig" swig -version
 print_version "tree" tree --version
 print_version "shellcheck" shellcheck --version
 echo
@@ -442,6 +586,7 @@ else
     echo "  1. Re-run the setup script to repair missing tools or files."
     echo "  2. If direnv failed, run: cd ~/cs350 && direnv allow"
     echo "  3. If Python packages failed, run: ~/cs350/.venv/bin/python -m pip install -r ~/cs350/requirements.txt"
+    echo "  4. If UART or I2C checks failed, re-run setup and reboot the Raspberry Pi."
     echo
     exit 1
 fi
