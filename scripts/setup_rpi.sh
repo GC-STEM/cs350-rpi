@@ -33,7 +33,7 @@ echo "  2. Update the package list"
 echo "  3. Check available disk space"
 echo "  4. Install command-line tools"
 echo "  5. Install Python packages"
-echo "  6. Create a Python virtual environment"
+echo "  6. Create a Python virtual environment and configure course settings"
 echo "  7. Remove package files that are no longer needed"
 echo "  8. Reboot, shut down, or return to the command prompt"
 echo
@@ -209,6 +209,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y direnv
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gh
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y liblgpio-dev
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y raspi-config
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y shellcheck
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y swig
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tree
@@ -226,8 +227,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-smbus
 echo "✔ Done installing Python packages."
 echo
 
-# Step 6: Create a Python virtual environment in ~/cs350/.
-echo "Step 6 of 8: Creating Python virtual environment..."
+# Step 6: Create a Python virtual environment and configure course settings.
+echo "Step 6 of 8: Creating Python virtual environment and course settings..."
 
 mkdir -p ~/cs350
 python3 -m venv ~/cs350/.venv
@@ -319,11 +320,28 @@ esac
 # <<< CS 350 virtual environment prompt <<<
 EOF
 
+echo "➜ Configuring course Python path..."
+
 # Create the direnv configuration file for the CS 350 directory.
 cat > ~/cs350/.envrc <<'EOF'
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 source "$HOME/cs350/.venv/bin/activate"
+
+# Add CS 350 course folders to the Python search path.
+# $HOME is included so package imports such as "from rpilib..." work.
+course_python_path="$HOME:$HOME/rpilib:$HOME/cs350"
+
+for module_dir in "$HOME"/cs350/*/; do
+    [ -d "$module_dir" ] || continue
+    course_python_path="${course_python_path}:${module_dir}"
+done
+
+export PYTHONPATH="${course_python_path}${PYTHONPATH:+:${PYTHONPATH}}"
+unset course_python_path module_dir
 EOF
+
+echo "✔ Course Python path configured for direnv activation."
+echo
 
 # Approve the .envrc file so direnv can use it.
 if cd ~/cs350 2>/dev/null; then
@@ -336,7 +354,35 @@ else
     echo
 fi
 
-echo "✔ Done creating Python virtual environment."
+echo "➜ Configuring UART hardware for CS 350..."
+if command -v raspi-config >/dev/null 2>&1; then
+    if sudo raspi-config nonint do_serial_hw 0 && sudo raspi-config nonint do_serial_cons 1; then
+        echo "✔ UART hardware is enabled and the serial console is disabled."
+        echo "⚠️  A reboot is required before the UART lab."
+    else
+        echo "❌ ERROR: UART configuration failed."
+        echo "Please check raspi-config and try again."
+        exit 1
+    fi
+else
+    echo "❌ ERROR: raspi-config command not found."
+    echo "Please install raspi-config and try again."
+    exit 1
+fi
+echo
+
+echo "➜ Configuring I2C hardware for CS 350..."
+if sudo raspi-config nonint do_i2c 0; then
+    echo "✔ I2C hardware is enabled."
+    echo "⚠️  A reboot is required before the I2C lab."
+else
+    echo "❌ ERROR: I2C configuration failed."
+    echo "Please check raspi-config and try again."
+    exit 1
+fi
+echo
+
+echo "✔ Done creating Python virtual environment and course settings."
 echo
 
 # Make the scripts in ~/scripts/ executable.
