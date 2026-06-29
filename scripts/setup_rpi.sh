@@ -205,6 +205,7 @@ echo
 
 # Step 4: Install command-line tools
 echo "Step 4 of 8: Installing command-line tools..."
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y direnv
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gh
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
@@ -219,6 +220,7 @@ echo
 # Step 5: Install Python packages
 echo "Step 5 of 8: Installing Python packages..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-full
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-dev
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-rpi.gpio
