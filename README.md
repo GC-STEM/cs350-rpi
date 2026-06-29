@@ -1,5 +1,8 @@
 # CS 350 – Raspberry Pi Repository
 
+> [!WARNING]
+> This repository is for exploration and demonstration purposes only. It is not intended for course faculty or student use.
+
 ![CS 350 Repo Card image](./assets/repo_card.png)
 
 <!--
