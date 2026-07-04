@@ -72,7 +72,12 @@ Enter the following command in your SSH terminal to run the verification script.
 ./scripts/verify_rpi.sh
 ```
 
-If the verification script completes successfully, type the command `tree -L 2` to view the directory structure. You should see these sub-directories and files, albeit without the comments, as shown below:
+If the verification script completes successfully, enter the following commands to view the directory structure. You should see these sub-directories and files, albeit without the comments, as shown below:
+
+```bash
+cd ~
+tree -L 2
+```
 
 ```text
 ~/                        # User home directory on your Raspberry Pi
