@@ -40,29 +40,31 @@ You will then be prompted to enter the password for your Raspberry Pi user accou
 
 **2. Download the repository files and run setup.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard--just click the **Copy** button on the right for the code block below. Then, paste the following commands into the Raspberry Pi terminal prompt.
 
-These commands will install Git, temporarily download the latest project dependencies, and execute the automated setup environment configuration utility.
+These commands will install Git, temporarily download the latest project dependencies, and execute the automated setup environment configuration utility. Be patient, as this process may take several minutes to complete. You will be prompted to enter your Raspberry Pi password during the process.
 
 ```bash
-sudo apt update && sudo apt install -y git
+sudo apt update
+sudo apt install -y git
 git clone https://github.com/GC-STEM/cs350-rpi.git /tmp/cs350-rpi
 chmod +x /tmp/cs350-rpi/scripts/setup_rpi.sh
 /tmp/cs350-rpi/scripts/setup_rpi.sh
-
 ```
 
-After the interactive script finishes executing, it will copy the files into place. If you run `tree -L 2` on your Raspberry Pi home directory (`~/`), you should see these sub-directories and files, albeit without the comments shown below:
+After the interactive script finishes executing, it will copy the files into place. You should see these sub-directories and files, albeit without the comments, as shown below:
 
 ```text
-~/
+~/                        # User home directory on your Raspberry Pi
+│
 ├── cs350/                # Course materials for CS 350
 │   ├── m1/               # Module 1 | Assignment: Prepare Your Raspberry Pi
 │   ├── m2/               # Module 2 | Milestone 1: PWM Lab
 │   ├── m3/               # Module 3 | Milestone 2: UART Lab
-│   ├── m4/               # Module 4 | Assignment: Wiring LCD
+│   ├── m4/               # Module 4 | Assignment: Wiring the LCD
 │   ├── m5/               # Module 5 | Milestone 3: Button Input Lab
 │   ├── m6/               # Module 6 | Assignment: Add Sensor
 │   ├── m7/               # Module 7 | Final Project: Thermostat Lab
-│   └── requirements.txt  # Course Python dependencies
+│   └── requirements.txt  # Course Python dependencies (do not modify this file)
+│
 ├── rpilib/               # Reusable Python library for RPi projects
 │   ├── comms/            # Package for communication helper modules
 │   ├── config.py         # Module for shared default settings and constants
@@ -72,14 +74,15 @@ After the interactive script finishes executing, it will copy the files into pla
 │   ├── sensors/          # Package for sensor device helper modules
 │   ├── testing/          # Package for testing that does not require hardware
 │   └── timing.py         # Module for shared timing values and timing helpers
+│
 └── scripts/              # Reusable Raspberry Pi shell scripts
     ├── setup_rpi.sh      # Set up Raspberry Pi environment
     ├── smoke_rpi.sh      # Run smoke tests on Raspberry Pi
     ├── update_rpi.sh     # Update Raspberry Pi environment
-    └── verify_rpi.sh     # Verify your RPi enviroment meets course requirements
+    └── verify_rpi.sh     # Verify your RPi environment meets course requirements
 ```
 
-> *Note.* This repository and your RPi home directory includes hidden files and directories not listed in this directory structure. These files support maintenance, documentation, testing, or automatic virtual environment activation. Do not modify those hidden assets. Focus your coding tasks inside the standard course directories listed above.
+> *Note.* This repository and your RPi home directory include hidden files and directories not listed in this directory structure. These files support maintenance, documentation, testing, or automatic virtual environment activation. Do not modify those hidden assets. Focus your coding tasks inside the `~/cs350/` course directory listed above.
 
 ## Troubleshooting
 
