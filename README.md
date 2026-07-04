@@ -24,7 +24,9 @@ Before you use this repository, complete these tasks:
 
 Follow these steps from a terminal window on your main computer. First, you will connect to your Raspberry Pi using Secure Shell (SSH). SSH lets you use your Raspberry Pi command line from another computer on the same network. After you connect, the setup commands will run directly on the Raspberry Pi.
 
-**1. Connect to your Raspberry Pi.** Open a terminal on your main computer and run the command below. If you have not changed the default settings, copy the following command and paste it into your terminal. If you changed the example username or hostname, replace `stu` with your username and `rpi` with your hostname, and type the command accordingly:
+### 1. Connect to your Raspberry Pi
+
+Open a terminal on your main computer and run the command below. If you have not changed the default settings, copy the following command and paste it into your terminal. If you changed the example username or hostname, replace `stu` with your username and `rpi` with your hostname, and type the command accordingly:
 
 ```bash
 ssh-keygen -R rpi
@@ -38,7 +40,9 @@ You will then be prompted to enter the password for your Raspberry Pi user accou
 
 > *Note.* Use the hostname, username, and password values you set in **Raspberry Pi Imager** when you created the bootable microSD card. If you do not have this information, open the **Raspberry Pi Imager** and follow the instructions to get to the Customization section. It should have saved your settings. If not, you will need to run the imager again on your microSD card. Be sure to note the hostname, username, and password for future use.
 
-**2. Download the repository files and run setup.** After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard--just click the **Copy** button on the right for the code block below. Then, paste the following commands into the Raspberry Pi terminal prompt.
+### 2. Download the repository files and run setup
+
+After you connect to your Raspberry Pi and have a prompt that looks like `stu@rpi:~$`, copy all the commands below to your clipboard--just click the **Copy** button on the right for the code block below. Then, paste the following commands into the Raspberry Pi terminal prompt.
 
 These commands will install Git, temporarily download the latest project dependencies, and execute the automated setup environment configuration utility. Be patient, as this process may take several minutes to complete. You will be prompted to enter your Raspberry Pi password during the process.
 
@@ -50,7 +54,25 @@ chmod +x /tmp/cs350-rpi/scripts/setup_rpi.sh
 /tmp/cs350-rpi/scripts/setup_rpi.sh
 ```
 
-After the interactive script finishes executing, it will copy the files into place. You should see these sub-directories and files, albeit without the comments, as shown below:
+### 3. Reboot and reconnect
+
+When the script finishes, you will see a message that says `Setup complete!`. Press `1` to reboot your Raspberry Pi. Be patient. Rebooting will take a few moments for the system to restart. Wait for the green light on your RPi to stop flashing constantly. Then, reconnect to your Raspberry Pi using the SSH command below. If you changed the example username or hostname, replace `stu` with your username and `rpi` with your hostname, and type the command accordingly:
+
+```bash
+ssh stu@rpi
+```
+
+If you see a message similar to `ssh: Could not resolve hostname <hostname>: No such host is known`, just wait a few minutes and try the `ssh` command again. *Pro tip*: Press the up arrow key to quickly repeat the previous command.
+
+### 4. Verify your environment
+
+Enter the following command in your SSH terminal to run the verification script. This script will check that your Raspberry Pi environment meets the course requirements. When prompted, type `y` to run the checks. If any issues are found, the script will notify you.
+
+```bash
+./scripts/verify_rpi.sh
+```
+
+If the verification script completes successfully, type the command `tree -L 2` to view the directory structure. You should see these sub-directories and files, albeit without the comments, as shown below:
 
 ```text
 ~/                        # User home directory on your Raspberry Pi
