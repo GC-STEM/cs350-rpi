@@ -1,0 +1,158 @@
+system:
+  hostname: "rpi"
+  os: "Raspberry Pi OS Lite"
+  arch: "aarch64"
+
+hardware:
+  model: "Raspberry Pi 4 Model B"
+  i2c_bus: 1
+  spi_bus: 0
+  # Enable/Disable SPI
+  spi_enabled: true
+
+
+
+hardware_communication:
+  uart:
+    tx: 14
+    rx: 15
+  i2c:
+    sda: 2
+    scl: 3
+  spi:
+    ce0: 8
+    mosi: 10
+    miso: 9
+    sclk: 11
+
+gpio_mapping:
+  # Power / Ground Pins
+  power_3v3_1: 1
+  power_5v_1: 2
+  ground_1: 6
+
+  # Component Mappings (BCM Pin Numbering)
+  status_led: 17
+  relay_1: 27
+  button_1: 4
+
+  # Communication Protocols
+  uart:
+  tx: 14
+  rx: 15
+  i2c:
+  sda: 2
+  scl: 3
+  spi:
+  ce0: 8
+  mosi: 10
+  miso: 9
+  sclk: 11
+
+gpio_mapping:
+  # Power Pins
+  power_3v3_1: 1
+  power_5v_1: 2
+  power_5v_2: 4
+  power_3v3_2: 17
+
+  # Ground Pins
+  ground_1: 6
+  ground_2: 9
+  ground_3: 14
+  ground_4: 20
+  ground_5: 25
+  ground_6: 30
+  ground_7: 34
+  ground_8: 39
+
+  # GPIO Pins
+  gpio2_i2c1_sda: 3
+  gpio3_i2c1_scl: 5
+  gpio4_gpclk0: 7
+  gpio5: 29
+  gpio6: 31
+  gpio12_pwm0: 32
+  gpio13_pwm1: 33
+  gpio14_uart0_tx: 8
+  gpio15_uart0_rx: 10
+  gpio16: 36
+  gpio17: 11
+  gpio22: 15
+  gpio23: 16
+  gpio24: 18
+  gpio25: 22
+  gpio26: 37
+  gpio27: 13
+
+  # I2C Pins
+  i2c1_sda: 3
+  i2c1_scl: 5
+
+  # PCM Pins
+  pcm_clk: 12
+  pcm_fs: 35
+  pcm_din: 38
+  pcm_dout: 40
+
+  # SPI Pins
+  gpio10_spi0_mosi: 19
+  gpio9_spi0_miso: 21
+  gpio11_spi0_sclk: 23
+  gpio8_spi0_ce0_n: 24
+  gpio7_spi0_ce1: 26
+
+  # UART Pins
+
+
+  eeprom_sda: 27
+  eeprom_scl: 28
+
+# BCM Pin Numbering
+bcm_pin_mapping:
+  1: power_3v3_1
+  2: power_5v_1
+  3: gpio2_i2c1_sda
+  4: power_5v_2
+  5: gpio3_i2c1_scl
+  6: ground_1
+  7: gpio4_gpclk0
+  8: gpio14_uart0_tx
+  9: ground_2
+  10: gpio15_uart0_rx
+  11: gpio17
+  12: gpio18_pwm0
+  13: gpio27
+  14: ground_3
+  15: gpio22
+  16: gpio23
+  17: power_3v3_2
+  18: gpio24
+  19: gpio10_spi0_mosi
+  20: ground_4
+  21: gpio9_spi0_miso
+  22: gpio25
+  23: gpio11_spi0_sclk
+  24: gpio8_spi0_ce0_n
+  25: ground_5
+  26: gpio7_spi0_ce1
+  27: eeprom_sda
+  28: eeprom_scl
+  29: gpio5
+  30: ground_6
+  31: gpio6
+  32: gpio12_pwm0
+  33: gpio13_pwm1
+  34: ground_7
+  35: gpio19_pcm_fs
+  36: gpio16
+  37: gpio26
+  38: gpio22_pcm_din
+  39: ground_9
+  40: gpio21_pcm_dout
+
+# LED Mapping
+led_mapping:
+  red_led: 17
+  relay_1: 27
+  button_1: 4

@@ -1,4 +1,4 @@
-# CS 350 – Raspberry Pi Repository
+# CS 350 – Raspberry Pi Repository | **Change Demo**
 
 > [!WARNING]
 > This repository is for exploration and demonstration purposes only. It is not intended for course faculty or student use.
@@ -90,22 +90,32 @@ tree -L 2
 │   ├── m5/               # Module 5 | Milestone 3: Button Input Lab
 │   ├── m6/               # Module 6 | Assignment: Add Sensor
 │   ├── m7/               # Module 7 | Final Project: Thermostat Lab
+│   ├── config.json       # Configuration file for your RPi environment
 │   └── requirements.txt  # Course Python dependencies (do not modify this file)
 │
 ├── rpilib/               # Reusable Python library for RPi projects
 │   ├── comms/            # Package for communication helper modules
+│   │   ├── i2c.py        # Module for I2C communication
+│   │   ├── spi.py        # Module for SPI communication
+│   │   └── uart.py       # Module for UART communication
 │   ├── config.py         # Module for shared default settings and constants
 │   ├── displays/         # Package for display device helper modules
+│   │   └── char_lcd.py   # Module for character LCD display
 │   ├── gpio/             # Package for GPIO helper modules
+│   │   ├── buttons.py    # Module for button input
+│   │   ├── leds.py       # Module for LED control
+│   │   └── pwm.py        # Module for Pulse Width Modulation (PWM) control
 │   ├── __init__.py       # Initialize the main rpilib package
 │   ├── sensors/          # Package for sensor device helper modules
+│   │   └── aht20.py      # Module for AHT20 sensor
 │   ├── testing/          # Package for testing that does not require hardware
 │   └── timing.py         # Module for shared timing values and timing helpers
 │
 └── scripts/              # Reusable Raspberry Pi shell scripts
-    ├── setup_rpi.sh      # Set up Raspberry Pi environment
+    ├── detect_rpi.sh     # Detect your Raspberry Pi environment
+    ├── setup_rpi.sh      # Set up your Raspberry Pi environment
     ├── smoke_rpi.sh      # Run smoke tests on Raspberry Pi
-    ├── update_rpi.sh     # Update Raspberry Pi environment
+    ├── update_rpi.sh     # Update your Raspberry Pi environment
     └── verify_rpi.sh     # Verify your RPi environment meets course requirements
 ```
 
