@@ -1,4 +1,4 @@
-# CS 350 – Raspberry Pi Repository | **Change Demo**
+# CS 350 – Raspberry Pi Repository
 
 > [!WARNING]
 > This repository is for exploration and demonstration purposes only. It is not intended for course faculty or student use.
